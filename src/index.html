@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="main.js" charset="utf-8"></script>
+    <style media="screen">
+      .hide {
+        display: none;
+      }
+    </style>
+    <script type="text/javascript">
+    var siteRegCheck;
+    function reset() {
+      clearInterval(siteRegCheck);
+      location.reload();
+    }
+    window.onload = function(){
+      var { shell } = require('electron');
+      document.getElementById('booking').addEventListener('did-navigate-in-page', (e) => {
+        if (e.url.includes("url=train-list")){
+        var userMoveForward = confirm("Направление полученно!. Начать обработку [OK] или же выбрать другое [cancel] ?");
+        if (userMoveForward) {
+          var buyUrl = e.url;
+           document.getElementById('searchURL').onclick = function(e){
+             e.preventDefault();
+             shell.openExternal(buyUrl);
+           };
+           document.getElementById('searchURL').classList.add("show");
+           document.getElementById('searchURL').classList.remove("hide");
+
+
+           document.getElementById('booking').loadURL("https://booking.uz.gov.ua");
+           document.getElementById('booking').classList.add("hide");
+           document.getElementById('booking').classList.remove("show");
+
+           document.getElementById('logs').classList.add("show");
+           document.getElementById('logs').classList.remove("hide");
+           go(buyUrl);
+           siteRegCheck = setInterval(function(){
+             console.log("interval~~");
+             go(buyUrl);
+           }, 900000 );
+        }
+       }
+     })
+    }
+    </script>
+  </head>
+  <body>
+    <h4 id="curTask">Выберите направление:</h4>
+    <a href="#" id="searchURL" class="hide">Ссылка на страницу покупки билетов</a><br>
+    <a href="javascript:reset();">Сброс</a>
+    <h4 id="freeSpace" class="hide"></h4>
+    <br>
+    <hr>
+    <textarea readonly id="logs" class="hide" name="name" rows="8" cols="80" style="width: 100%;height: 800px;font-size: 30px;">
+    </textarea>
+    <webview id="booking" class="page show" src="https://booking.uz.gov.ua/" autosize="off" style="width: 100%;height: 800px;"></webview>
+  </body>
+</html>
